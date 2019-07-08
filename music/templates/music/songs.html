@@ -1,0 +1,68 @@
+{% extends 'music/base.html' %}
+{% block songs_active %}active{% endblock %}
+{% block title %}Songs{% endblock %}
+
+{% block body %}
+    <div class="panel panel-default">
+        <div class="panel-body">
+
+            <h3>All Songs</h3>
+
+            {#                    {% if error_message %}#}
+            {#                        <p><strong>{{ error_message }}</strong></p>#}
+            {#                    {% endif %}#}
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Title</th>
+
+                    <th>Audio File</th>
+                    <th>Favorite</th>
+                    <th>Album</th>
+                    <th>Actions</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                {% for album in all_albums %}
+                    {% for song in album.song_set.all %}
+                        <tr>
+                            <td>{{ song.song_title }}</td>
+
+                            <td>
+                                {#                                    <a target="_blank" href="{{ song.audio_file.url }}">#}
+                                {#                                        <button type="button" class="btn btn-success btn-xs">#}
+                                {#                                            <span class="glyphicon glyphicon-play"></span>&nbsp; Play#}
+                                {#                                        </button>#}
+                                {#                                    </a>#}
+                                <a target="_blank" href="{{ song.music.url }}">
+                                    <button type="button" class="btn btn-success btn-xs">
+                                        <span class="glyphicon glyphicon-play"></span>&nbsp; Play
+                                    </button>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{% url 'favorite' song.id %}" class="btn-favorite"><span
+                                        class="glyphicon glyphicon-star {% if not song.is_favourite %}glyphicon glyphicon-star-empty{% endif %}"></span></a>
+                            </td>
+                            <td>{{ song.album }}</td>
+                            <td>
+                                <form action="{% url 'song-delete' song.id %}" method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="song_id" value="{{ song.id }}"/>
+                                    <button type="submit" class="btn btn-danger btn-xs">
+                                        <span class="glyphicon glyphicon-remove"></span>&nbsp; Delete
+                                    </button>
+                                </form>
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
